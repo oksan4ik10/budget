@@ -72,7 +72,7 @@ class AppData{
         // this.expenses={};
     }
         start(){
-
+            
             //проверка на пустое поле месячный доход
             if (money.value===""){         
                 calc.disabled=true;
@@ -162,6 +162,7 @@ class AppData{
         depositChange(){
             const proc=this.value; 
             if(this.value==="other"){
+                depositPercent.value="";
                 depositPercent.style.display="inline-block";
                 depositPercent.addEventListener("change",()=>{
                     calc.disabled=false;
@@ -285,8 +286,8 @@ cancel.addEventListener("click",()=>{
 
 calc.addEventListener("click",appData.start.bind(appData));//привязка к контексту
 
-
-
+money.addEventListener("input",()=>calc.disabled=false)
+depositPercent.addEventListener("input",()=>calc.disabled=false)
 
 
 buttonPlus1.addEventListener("click",addIncomeValue);
