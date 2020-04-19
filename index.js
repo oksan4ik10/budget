@@ -244,6 +244,8 @@ const res=()=>{
     calc.disabled=false;
     calc.style.display="none";
     cancel.style.display="block"; //кнопка сбросить    
+    depositAmount.disabled=true;
+    depositBank.disabled=true;
 }
 
 
@@ -289,11 +291,17 @@ cancelAll=()=>{
     //сброс депозита
     check.checked=false;
     appData.getDepositBlock();
+    depositAmount.readOnly=false;
+    depositBank.readOnly=false;
 
     calc.style.display="block";
     
     cancel.style.display="none"; //кнопка сбросить 
-    arr.forEach((el)=>deleteCookie(el)) //удалить все куки
+
+
+    arr.forEach((el)=>deleteCookie(el)); //удалить все куки
+
+
     arr.forEach((el)=>{localStorage.removeItem(el)})
 
 }
@@ -369,6 +377,7 @@ function getCookie(name) {
     let cookie_date = new Date ( );  // Текущая дата и время
     cookie_date.setTime ( cookie_date.getTime() - 1 );
     document.cookie = cookie_name += "=; expires=" + cookie_date.toGMTString();
+    
   }
 
 
