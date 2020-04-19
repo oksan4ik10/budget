@@ -17,6 +17,9 @@ incomeValue=document.getElementsByClassName("additional_income-value")[0],
 addExpenses=document.getElementsByClassName("additional_expenses-value")[0],
 accumulation=document.getElementsByClassName("income_period-value")[0],
 missionMonth=document.getElementsByClassName("target_month-value")[0],
+
+resultTotal=document.querySelectorAll(".result-total"), //для куки
+
 //left
 
 money=document.querySelector(".salary-amount"),
@@ -97,8 +100,9 @@ class AppData{
             this.getBudget();
             this.getTargetMonth();
             this.showResult();
-            this.res();
+           res();
             this.addIncome=[];
+            this.saveCookie();
    
               
         }
@@ -218,19 +222,29 @@ class AppData{
             missionMonth.value=this.mission;
           }
 
-          //функция сброса
-        res=()=>{
-            inputText.forEach((el)=>el.readOnly=true); //блокировать все input
-            calc.disabled=false;
-            calc.style.display="none";
-            cancel.style.display="block"; //кнопка сбросить    
+
+        //сохранение куки
+        saveCookie(){
+            const newOb={}
+            resultTotal.forEach((el,index)=>{
+                setCookie(index,el.value);
+                localStorage[index]=el.value;
+            });
         }
+
             
 }
 
 const appData=new AppData ();
 
 
+//функция сброса
+const res=()=>{
+    inputText.forEach((el)=>el.readOnly=true); //блокировать все input
+    calc.disabled=false;
+    calc.style.display="none";
+    cancel.style.display="block"; //кнопка сбросить    
+}
 
 
 
@@ -261,8 +275,7 @@ const addIncomeValue=()=>{
 
 
 
-//сброс всех инпутов
-cancel.addEventListener("click",()=>{
+cancelAll=()=>{
     let inputAll=document.querySelectorAll("input");
     inputAll.forEach((el)=>{
         if (el.type==="range") el.value=1
@@ -280,7 +293,15 @@ cancel.addEventListener("click",()=>{
     calc.style.display="block";
     
     cancel.style.display="none"; //кнопка сбросить 
- })
+    arr.forEach((el)=>deleteCookie(el)) //удалить все куки
+    arr.forEach((el)=>{localStorage.removeItem(el)})
+
+}
+
+
+
+//сброс всех инпутов
+cancel.addEventListener("click",cancelAll)
 
 
 
@@ -310,4 +331,87 @@ nameSum.forEach((el)=>{
         e.target.value=e.target.value.replace(/\D/g,"");
     })
 })
+
+
+//куки
+// document.cookie="name=kkk";
+let arr=coockNameArr(document.cookie).sort();
+
+//если пользователь вручную удалит что-то из локального хранилища, то идет сброс всего
+if(arr.length!==localStorage.length) cancelAll();
+
+
+//если в куках что-то есть, до добавляем на страницу и блокируем левую часть
+if (document.cookie){
+    resultTotal.forEach( (el,index)=>{
+        el.value=getCookie(String(index))
+    }
+
+    )
+    res();
+
+}
+
+
+
+
+
+//ищет значение по имени куки
+function getCookie(name) {
+    let matches = document.cookie.match(new RegExp(
+      "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+  }
+  //удаление куки
+  function deleteCookie ( cookie_name )
+  {
+    let cookie_date = new Date ( );  // Текущая дата и время
+    cookie_date.setTime ( cookie_date.getTime() - 1 );
+    document.cookie = cookie_name += "=; expires=" + cookie_date.toGMTString();
+  }
+
+
+  //установка куки
+  function setCookie(name, value, options = {}) {
+
+    options = {
+      path: '/',
+      // при необходимости добавьте другие значения по умолчанию
+      ...options
+    };
+  
+    if (options.expires instanceof Date) {
+      options.expires = options.expires.toUTCString();
+    }
+  
+    let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
+  
+    for (let optionKey in options) {
+      updatedCookie += "; " + optionKey;
+      let optionValue = options[optionKey];
+      if (optionValue !== true) {
+        updatedCookie += "=" + optionValue;
+      }
+    }
+  
+    document.cookie = updatedCookie;
+  }
+
+
+//создает массив из имён куки
+function coockNameArr(str){
+    let arr=str.split("; ")
+    let newArr=[];
+    arr.forEach((el)=>{
+        let coockName="";
+        for (let i=0; i<el.length;i++){
+            if (el[i]!=="=") coockName+=el[i];
+            else break;
+        }
+        newArr.push(coockName);
+    })
+    return newArr;
+}
+
 
