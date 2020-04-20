@@ -238,14 +238,17 @@ class AppData{
 const appData=new AppData ();
 
 
-//функция сброса
+//функция рассчитать
 const res=()=>{
     inputText.forEach((el)=>el.readOnly=true); //блокировать все input
     calc.disabled=false;
     calc.style.display="none";
     cancel.style.display="block"; //кнопка сбросить    
     depositAmount.disabled=true;
+    check.disabled=true;
     depositBank.disabled=true;
+    buttonPlus1.disabled=true;
+    buttonPlus2.disabled=true;
 }
 
 
@@ -276,7 +279,7 @@ const addIncomeValue=()=>{
 };
 
 
-
+//функция для сброса
 cancelAll=()=>{
     let inputAll=document.querySelectorAll("input");
     inputAll.forEach((el)=>{
@@ -289,20 +292,22 @@ cancelAll=()=>{
     inputText.forEach((el)=>el.readOnly=false);
     
     //сброс депозита
+    depositAmount.disabled=false;
+    check.disabled=false;
+    depositBank.disabled=false;
     check.checked=false;
     appData.getDepositBlock();
-    depositAmount.readOnly=false;
-    depositBank.readOnly=false;
-
     calc.style.display="block";
+    buttonPlus1.disabled=false;
+    buttonPlus2.disabled=false;
     
     cancel.style.display="none"; //кнопка сбросить 
 
 
-    arr.forEach((el)=>deleteCookie(el)); //удалить все куки
-
-
-    arr.forEach((el)=>{localStorage.removeItem(el)})
+    arr.forEach((el)=>{
+        deleteCookie(el)
+    }); //удалить все куки
+    arr.forEach((el)=>{localStorage.removeItem(el)}) //удалить все из локального хранилища
 
 }
 
@@ -360,10 +365,6 @@ if (document.cookie){
 
 }
 
-
-
-
-
 //ищет значение по имени куки
 function getCookie(name) {
     let matches = document.cookie.match(new RegExp(
@@ -374,37 +375,21 @@ function getCookie(name) {
   //удаление куки
   function deleteCookie ( cookie_name )
   {
-    let cookie_date = new Date ( );  // Текущая дата и время
-    cookie_date.setTime ( cookie_date.getTime() - 1 );
-    document.cookie = cookie_name += "=; expires=" + cookie_date.toGMTString();
-    
+      setCookie(cookie_name,getCookie(cookie_name),1992,12,12)
+        
   }
 
 
   //установка куки
-  function setCookie(name, value, options = {}) {
+  function setCookie(key, value, year,month,day) {
+      let cookieStr=key+"="+value;
+      if(year){
+          const expires=new Date(year,month,day)
+          cookieStr+="; expires=" + expires.toGMTString();
+          
+      }  
+      document.cookie=cookieStr;
 
-    options = {
-      path: '/',
-      // при необходимости добавьте другие значения по умолчанию
-      ...options
-    };
-  
-    if (options.expires instanceof Date) {
-      options.expires = options.expires.toUTCString();
-    }
-  
-    let updatedCookie = encodeURIComponent(name) + "=" + encodeURIComponent(value);
-  
-    for (let optionKey in options) {
-      updatedCookie += "; " + optionKey;
-      let optionValue = options[optionKey];
-      if (optionValue !== true) {
-        updatedCookie += "=" + optionValue;
-      }
-    }
-  
-    document.cookie = updatedCookie;
   }
 
 
