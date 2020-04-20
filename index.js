@@ -230,6 +230,7 @@ class AppData{
                 setCookie(index,el.value);
                 localStorage[index]=el.value;
             });
+        arr=coockNameArr(document.cookie).sort()  //запомнить куки в массив
         }
 
             
@@ -237,9 +238,10 @@ class AppData{
 
 const appData=new AppData ();
 
-
+let arr=coockNameArr(document.cookie).sort(); //записать все куки в массив
 //функция рассчитать
 const res=()=>{
+
     inputText.forEach((el)=>el.readOnly=true); //блокировать все input
     calc.disabled=false;
     calc.style.display="none";
@@ -305,7 +307,9 @@ cancelAll=()=>{
 
 
     arr.forEach((el)=>{
-        deleteCookie(el)
+        deleteCookie(String(el));
+        console.log(document.cookie);
+        
     }); //удалить все куки
     arr.forEach((el)=>{localStorage.removeItem(el)}) //удалить все из локального хранилища
 
@@ -348,7 +352,6 @@ nameSum.forEach((el)=>{
 
 //куки
 // document.cookie="name=kkk";
-let arr=coockNameArr(document.cookie).sort();
 
 //если пользователь вручную удалит что-то из локального хранилища, то идет сброс всего
 if(arr.length!==localStorage.length) cancelAll();
